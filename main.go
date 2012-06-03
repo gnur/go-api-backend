@@ -3,7 +3,13 @@ package main
 import (
     "code.google.com/p/go.net/websocket"
     "net/http"
+    "fmt"
 )
+
+func apiHandler(c http.ResponseWriter, req *http.Request) {
+    fmt.Fprint(c, "commando" + req.URL.Path[:1])
+}
+
 
 func main() {
     go h.run()
