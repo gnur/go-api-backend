@@ -1,0 +1,2 @@
+First GO project I've made, relays GET commands to :9002 to a single websocket. 
+Allows for real time remote control of web applications, pretty cool :).
