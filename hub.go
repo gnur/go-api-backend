@@ -4,24 +4,22 @@ type hub struct {
     listener *connection
     listening bool
     command chan string
-    nowplaying chan string
     connect chan *connection
     disconnect chan *connection
 }
 
 var h = hub{
     command: make(chan string),
-    nowplaying: make(chan string),
     connect: make(chan *connection),
+    disconnect: make(chan *connection),
     listening: false,
 }
 
 func (h *hub) run() {
     for {
         select {
-        case <- h.disconnect:
-            if h.listening {
-                h.listener.send <- "disconnect plz"
+        case c := <- h.disconnect:
+            if c == h.listener && h.listening {
                 close(h.listener.send)
                 h.listener.ws.Close()
                 h.listening = false
@@ -31,10 +29,11 @@ func (h *hub) run() {
                 h.listener = c
                 h.listening = true
             } else {
+                c.send <- "close"
                 close(c.send)
                 c.ws.Close()
             }
-        case  m := <- h.command:
+        case m := <- h.command:
             if h.listening {
                 h.listener.send <- m 
             }
