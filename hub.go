@@ -1,11 +1,14 @@
 package main
 
+import "fmt"
+
 type hub struct {
     listener *connection
     listening bool
     command chan string
     connect chan *connection
     disconnect chan *connection
+    currentsong string
 }
 
 var h = hub{
@@ -34,7 +37,10 @@ func (h *hub) run() {
                 c.ws.Close()
             }
         case m := <- h.command:
-            if h.listening {
+            if m[:2] == "np" {
+                fmt.Println(m)
+                h.currentsong = m[2:]
+            } else if h.listening {
                 h.listener.send <- m 
             }
         }

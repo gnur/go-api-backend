@@ -9,7 +9,7 @@ import (
 
 func apiHandler(c http.ResponseWriter, req *http.Request) {
     var commando, parameter string
-    c.Header().Set("access-control-allow-origin", "http://gnur.nl:8080")
+    c.Header().Set("access-control-allow-origin", "http://muziek.0x8.be")
     commands := strings.Split(req.URL.Path[1:], "/")
     if len(commands) > 1 {
         commando = commands[1]
@@ -46,10 +46,7 @@ func apiHandler(c http.ResponseWriter, req *http.Request) {
             h.command <- "setVolume('" + parameter + "');"
         }
     }
-    fmt.Println(commando + ": " + parameter)
-
-    fmt.Fprint(c, "commando " + commando + "\nparameter " + parameter)
-    
+    fmt.Fprint(c, h.currentsong)
 }
 
 
@@ -57,7 +54,7 @@ func main() {
     go h.run()
     http.HandleFunc("/", apiHandler)
     http.Handle("/ws", websocket.Handler(wsHandler))
-    err := http.ListenAndServe(":9002", nil)
+    err := http.ListenAndServe(":9001", nil)
     if err != nil {
         fmt.Println("het is niet gelukt.. helaas")
     }

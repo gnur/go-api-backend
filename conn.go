@@ -2,7 +2,6 @@ package main
 
 import (
     "code.google.com/p/go.net/websocket"
-    "fmt"
 )
 
 type connection struct {
@@ -14,9 +13,10 @@ func (c *connection) reader() {
     for {
         var message string
         err := websocket.Message.Receive(c.ws, &message)
-        fmt.Println(message)
         if err != nil {
             break
+        } else if message != "ka" {
+            h.command <- "np" + message
         }
     }
     h.disconnect <- c
